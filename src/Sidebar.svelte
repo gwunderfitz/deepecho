@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import logo from './assets/DE_Logo_1.png'; // ✅ this is how to load your logo
+  import logo from './assets/DE_Logo_1.png'; 
+  import { user } from './stores/user.js';
 
   const dispatch = createEventDispatcher();
   let showDropdown = false;
@@ -35,6 +36,7 @@
     <button on:click={() => goTo('statistics')}>Statistics</button>
     <button on:click={() => goTo('settings')}>Settings</button>
   </nav>
+
 </aside>
 
 <style>

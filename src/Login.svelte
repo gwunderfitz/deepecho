@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
   const USERS_KEY = 'deepecho_users';
   const SESSION_KEY = 'deepecho_session';
 
@@ -19,7 +21,8 @@
 
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
     alert('Logged in as ' + user.firstName);
-    // optionally redirect or update UI
+
+    dispatch('navigate', 'home');
   }
 </script>
 
@@ -36,6 +39,10 @@
 
     <button on:click={login}>Login</button>
   </div>
+  <button on:click={() => dispatch('navigate', 'register')} class="alt-btn">
+    Need an account? Register here
+  </button>
+
 </div>
 
 <style>
@@ -84,4 +91,14 @@
     color: var(--error);
     font-weight: bold;
   }
+
+  .alt-btn {
+  background: none;
+  border: none;
+  color: var(--highlight);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
 </style>

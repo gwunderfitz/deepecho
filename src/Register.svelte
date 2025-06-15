@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
   const USERS_KEY = 'deepecho_users';
 
   let firstName = '';
@@ -59,6 +61,10 @@
 
     <button on:click={register}>Submit</button>
   </div>
+  <button on:click={() => dispatch('navigate', 'login')} class="alt-btn">
+    Already have an account? Log in
+  </button>
+
 </div>
 
 <style>
@@ -112,4 +118,13 @@
     color: var(--fg-main);
     font-weight: bold;
   }
+
+  .alt-btn {
+  background: none;
+  border: none;
+  color: var(--highlight);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
 </style>

@@ -7,10 +7,18 @@
   import Playlists from './Playlists.svelte';
   import Login from './Login.svelte';
   import Register from './Register.svelte';
+  import { user } from './stores/user.js';
   import { audio } from './audio.js';
   import { onMount } from 'svelte';
 
   let currentPage = 'home';
+  $user; 
+  onMount(() => {
+    if (!user || !$user) {
+      currentPage = 'register';
+    }
+  });
+
   let showPlayer = false;
   let isSeeking = false;
   let isPlaying = false;
@@ -92,7 +100,7 @@
   {/if}
 
   <div style="flex: 1; position: relative;">
-    <svelte:component on:navigate={handleNavigate} this={pages[currentPage]} {...props} />
+    <svelte:component on:navigate={handleNavigate} this={pages[currentPage]} {...props}   on:navigate={(e) => currentPage = e.detail} />
 
     {#if showUI && !showPlayer}
       <MiniPlayer
