@@ -6,7 +6,7 @@
   let showDropdown = false;
 
   function goTo(page) {
-    dispatch('navigate', page);
+    dispatch('navigate', { page: page });
     showDropdown = false;
   }
 
@@ -45,7 +45,7 @@
     min-height: 100vh;
     padding: 1rem;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    font-family: var(--font-text);
+    font-family: var(--font-text),sans-serif;
   }
 
   .logo {
@@ -90,7 +90,7 @@
     border: none;
     text-align: left;
     cursor: pointer;
-    font-family: var(--font-text);
+    font-family: var(--font-text),sans-serif;
   }
 
   .dropdown button:hover {
