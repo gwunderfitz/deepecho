@@ -12,6 +12,8 @@
   ];
 
   let newMood = '';
+  let editingIndex = null;
+  let editingText = '';
 
   function addMood() {
     const trimmed = newMood.trim();
@@ -27,6 +29,25 @@
     saveMoods();
   }
 
+  function editMood(index) {
+    editingIndex = index;
+    editingText = moods[index];
+     setTimeout(() => {
+        const input = document.getElementById(`mood-input-${index}`);
+        input?.focus();
+     });
+  }
+
+  function saveEdit(index) {
+    const trimmed = editingText.trim();
+    if (trimmed) {
+      moods[index] = trimmed;
+      saveMoods();
+    }
+    editingIndex = null;
+    editingText = '';
+  }
+
   function saveMoods() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(moods));
   }
@@ -34,27 +55,35 @@
 
 <div class="page">
   <h1>Mood Management</h1>
-  <p class="subheading">Edit/delete your existing mood tags</p>
 
+  <div class="mood">
+    <input
+            id="moodInput"
+            bind:value={newMood}
+            placeholder="e.g. Rainy weather"
+            on:keydown={(e) => e.key === 'Enter' && addMood()}
+    />
+    <button on:click={addMood}>➕</button>
+  </div>
+  <p class="subheading">Edit/delete your existing mood tags</p>
   <ul class="mood-list">
-    {#each moods as mood, i}
-      <li>
+  {#each moods as mood, i}
+    <li class="mood">
+      {#if editingIndex === i}
+        <input
+          id={"mood-input-" + i}
+          bind:value={editingText}
+          on:keydown={(e) => e.key === 'Enter' && saveEdit(i)}
+          on:blur={() => saveEdit(i)}
+        />
+      {:else}
         <span>{mood}</span>
-        <button on:click={() => deleteMood(i)}>×</button>
+      {/if}
+        <button  on:click={() => editMood(i)}>✏️</button>
+        <button on:click={() => deleteMood(i)}>➖</button>
       </li>
     {/each}
   </ul>
-
-  <div class="add">
-    <label for="moodInput">New Mood Name</label>
-    <input
-      id="moodInput"
-      bind:value={newMood}
-      placeholder="e.g. Rainy weather"
-      on:keydown={(e) => e.key === 'Enter' && addMood()}
-    />
-    <button on:click={addMood}>Add Mood</button>
-  </div>
 </div>
 
 <style>
@@ -78,17 +107,18 @@
     gap: 0.5rem;
   }
 
-    .mood-list li {
-    background-color: var(--bg-accent);
-    color: var(--fg-main);
+  .mood {
+    background-color: white;
+    color: black;
     padding: 0.6rem 1rem;
     border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 2em;
   }
 
-    .mood-list button {
+  .mood button {
     background: none;
     border: none;
     color: var(--error);
@@ -97,33 +127,12 @@
     cursor: pointer;
   }
 
-  .add {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-width: 300px;
+  .mood input {
+      border: none;
+      height: 100%;
   }
 
-  .add input {
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: none;
-    background-color: white;
-    color: black;
-  }
-
-  .add button {
-    align-self: flex-start;
-    padding: 0.5rem 1rem;
-    background-color: var(--cta);
-    color: var(--bg-accent);
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-  }
-
-  .add button:hover {
-    background-color: var(--hover);
-    color: white;
+  .mood *:first-child {
+    flex-grow: 1;
   }
 </style>

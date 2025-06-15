@@ -10,6 +10,8 @@
   let currentPage = 'home';
   let showPlayer = false;
 
+  let props = {};
+
   const pages = {
     home: Home,
     moods: Moods,
@@ -22,16 +24,22 @@
     showPlayer = !showPlayer;
   }
 
+  function handleNavigate(event) {
+    const { page, id } = event.detail;
+    currentPage = page;
+    props = { id };
+  }
+
   $: showBottomBar = currentPage !== 'login' && currentPage !== 'register';
 </script>
 
 <div style="display: flex">
   {#if showBottomBar}
-    <Sidebar on:navigate={(e) => currentPage = e.detail} />
+    <Sidebar on:navigate={handleNavigate} />
   {/if}
 
   <div style="flex: 1; position: relative;">
-    <svelte:component this={pages[currentPage]} />
+    <svelte:component on:navigate={handleNavigate} this={pages[currentPage]} {...props} />
 
     <!-- 🎵 Mini Player Bar (only if not on login/register) -->
     {#if showBottomBar}
