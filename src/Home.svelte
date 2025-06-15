@@ -25,6 +25,9 @@
   let trendingPlaylists = [
     'Emo Summer', 'Techno Vortex', 'Spooky Season', 'Y2K Nostalgia'
   ];
+
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
 </script>
 
 <div class="home-page">
@@ -33,8 +36,10 @@
   <h2>Your Top Playlists</h2>
   <div class="carousel">
     {#each yourPlaylists as item}
-      <div class="card"
-           style={`background-image: url('${item.image}')`}
+      <div
+        class="card"
+        style={`background-image: url('${item.image}')`}
+        on:click={() => dispatch('navigate', { page: 'playlist', id: item.id })}
       >
         {item.name}
       </div>

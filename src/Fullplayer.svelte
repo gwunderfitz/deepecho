@@ -30,6 +30,7 @@
       <div class="progress-group">
         <input
           type="range"
+          class="progress"
           min="0"
           max={duration}
           step="0.1"
@@ -104,8 +105,8 @@
   }
 
   .large-cover {
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    height: 500px;
     object-fit: cover;
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);

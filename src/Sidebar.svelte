@@ -37,6 +37,10 @@
     <button on:click={() => goTo('settings')}>Settings</button>
   </nav>
 
+  <button on:click={() => { localStorage.clear(); location.reload(); }}>
+  🔁 Reset All Data
+  </button>
+
 </aside>
 
 <style>

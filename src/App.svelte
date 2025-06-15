@@ -16,7 +16,9 @@
   let currentPage = 'home';
   $user; 
   onMount(() => {
-    if (!user || !$user) {
+    if ($user) {
+      currentPage = 'home';
+    } else {
       currentPage = 'register';
     }
   });
@@ -133,7 +135,3 @@
     {/if}
   </div>
 </div>
-
-<button on:click={() => { localStorage.clear(); location.reload(); }}>
-  🔁 Reset All Data
-</button>

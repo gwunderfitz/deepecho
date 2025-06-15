@@ -1,13 +1,15 @@
 import { writable } from 'svelte/store';
 
-export const user = writable(
-  JSON.parse(sessionStorage.getItem('user')) || null
-);
+const SESSION_KEY = 'deepecho_session';
+const savedUser = JSON.parse(localStorage.getItem(SESSION_KEY));
 
+export const user = writable(savedUser || null);
+
+// Automatically update localStorage when the user changes
 user.subscribe((value) => {
   if (value) {
-    sessionStorage.setItem('user', JSON.stringify(value));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(value));
   } else {
-    sessionStorage.removeItem('user');
+    localStorage.removeItem(SESSION_KEY);
   }
 });

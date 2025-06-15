@@ -8,6 +8,7 @@
        url('https://fonts.cdnfonts.com/s/11807/FranklinGothic-Book.woff') format('woff');
   font-weight: normal;
   font-style: normal;
+  font-size: large;
 }
 
 /* Root variables for colors */
@@ -30,6 +31,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: var(--font-text);
+  font-size: large;
   background-color: var(--bg);
   color: var(--text);
 }

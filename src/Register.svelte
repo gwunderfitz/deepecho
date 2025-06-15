@@ -120,11 +120,11 @@
   }
 
   .alt-btn {
-  background: none;
-  border: none;
-  color: var(--highlight);
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 0.5rem;
-}
+    background: none;
+    border: none;
+    color: var(--highlight);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 0.5rem;
+  }
 </style>

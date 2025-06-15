@@ -62,8 +62,8 @@
   }
 
   .playlist-list li {
-    background-color: var(--bg-accent);
-    color: var(--fg-main);
+    background-color: white;
+    color: black;
     padding: 0.6rem 1rem;
     border-radius: 12px;
     display: flex;
