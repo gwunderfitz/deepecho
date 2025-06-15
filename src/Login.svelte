@@ -22,7 +22,7 @@
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
     alert('Logged in as ' + user.firstName);
 
-    dispatch('navigate', 'home');
+    dispatch('navigate', { page: 'home' });
   }
 </script>
 
@@ -39,7 +39,7 @@
 
     <button on:click={login}>Login</button>
   </div>
-  <button on:click={() => dispatch('navigate', 'register')} class="alt-btn">
+  <button on:click={() => dispatch('navigate', {page:'register'})} class="alt-btn">
     Need an account? Register here
   </button>
 

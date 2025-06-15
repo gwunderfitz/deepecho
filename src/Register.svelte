@@ -61,7 +61,7 @@
 
     <button on:click={register}>Submit</button>
   </div>
-  <button on:click={() => dispatch('navigate', 'login')} class="alt-btn">
+  <button on:click={() => dispatch('navigate', {page:'login'})} class="alt-btn">
     Already have an account? Log in
   </button>
 

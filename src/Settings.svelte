@@ -6,7 +6,7 @@
 
   function logout() {
     user.set(null);
-    dispatch('navigate', 'register');
+    dispatch('navigate', {page: 'register'});
   }
 
   let openIndex = null; // which FAQ is open
