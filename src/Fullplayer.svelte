@@ -1,109 +1,62 @@
 <script>
-  import { onMount } from 'svelte';
-  export let showPlayer = false;
+  import { fade } from 'svelte/transition';
+  import { audio } from './audio.js';
+
+  export let isPlaying;
+  export let currentTime;
+  export let duration;
+  export let volume;
+  export let togglePlay;
   export let togglePlayer;
+  export let onSeek;
+  export let onVolumeChange;
+  let isSeeking = false;
 
-  let isPlaying = false;
-  let currentTime = 0;
-  let duration = 0;
-  let volume = 0.5;
-  let audio;
-
-  onMount(() => {
-    audio = new Audio('/music/Crystal_Skies.mp3'); 
-    audio.volume = volume;
-
-    audio.addEventListener('loadedmetadata', () => {
-      duration = audio.duration;
-    });
-
-    audio.addEventListener('timeupdate', () => {
-      currentTime = audio.currentTime;
-    });
-
-    audio.addEventListener('ended', () => {
-      isPlaying = false;
-      currentTime = 0;
-    });
-  });
-
-  function togglePlay() {
-    if (!audio) return;
-    isPlaying ? audio.pause() : audio.play();
-    isPlaying = !isPlaying;
-  }
-
-  function onSeek(event) {
-    currentTime = event.target.value;
-    audio.currentTime = currentTime;
-  }
-
-  function onVolumeChange(event) {
-    volume = event.target.value;
-    audio.volume = volume;
+  function formatTime(sec) {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 </script>
 
-<!-- Bottom Bar -->
-<div class="bottom-bar">
-  <div class="left">
-    <span>{isPlaying ? '▶' : '❚❚'} Now playing: Crystal Skies</span>
-  </div>
-
-  <input
-    type="range"
-    min="0"
-    max={duration}
-    step="0.1"
-    value={currentTime}
-    on:input={onSeek}
-    class="progress"
-  />
-
-  <div class="volume bottom-volume">
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      value={volume}
-      on:input={onVolumeChange}
-    />
-  </div>
-
-  <button class="toggle-button" on:click={togglePlayer}>
-    {showPlayer ? '▲' : '▼'}
-  </button>
-
-  <img src="/song-cover.jpeg" alt="Cover" class="small-cover" />
-</div>
-
-
-<!-- Fullscreen Player -->
-{#if showPlayer}
-  <div class="full-player">
+{#if isPlaying !== undefined}
+  <div class="full-player" transition:fade>
     <button class="collapse-btn" on:click={togglePlayer}>⬇</button>
 
     <img src="/song-cover.jpeg" alt="Cover" class="large-cover" />
 
-    <div class="controls">
-      <button>⏮</button>
-      <button on:click={togglePlay}>{isPlaying ? '⏸' : '▶'}</button>
-      <button>⏭</button>
-    </div>
+    <!-- Bottom control bar -->
+    <div class="player-controls-bar">
+      <div class="progress-group">
+        <input
+          type="range"
+          min="0"
+          max={duration}
+          step="0.1"
+          bind:value={currentTime}
+          on:mousedown={() => isSeeking = true}
+          on:mouseup={() => {
+            isSeeking = false;
+            audio.currentTime = currentTime;
+          }}
+          on:touchstart={() => isSeeking = true}
+          on:touchend={() => {
+            isSeeking = false;
+            audio.currentTime = currentTime;
+          }}
+        />
+        <div class="time-display">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
 
-    <input
-      type="range"
-      min="0"
-      max={duration}
-      step="0.1"
-      value={currentTime}
-      on:input={onSeek}
-      class="progress-main"
-    />
+        <div class="buttons">
+          <button>⏮</button>
+          <button on:click={togglePlay}>{isPlaying ? '⏸' : '▶'}</button>
+          <button>⏭</button>
+        </div>
+      </div>
 
-    <div class="volume">
-      <label>
+      <div class="volume">
         <input
           type="range"
           min="0"
@@ -111,82 +64,43 @@
           step="0.01"
           value={volume}
           on:input={onVolumeChange}
-          class="volume-vertical"
+          class=volume-vertical
         />
-      </label>
+      </div>
     </div>
   </div>
 {/if}
 
 <style>
-  .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--bg-accent);
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.7rem 1rem;
-    gap: 1rem;
-    z-index: 50;
-  }
-
-  .left {
-    flex: 1;
-    font-size: 0.95rem;
-  }
-
-  .progress {
-    flex: 2;
-    accent-color: var(--fg-main);
-  }
-
-  .toggle-button {
-    background: none;
-    border: 2px solid var(--fg-main);
-    color: var(--fg-main);
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-
-  .small-cover {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-
   .full-player {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: var(--bg);
     color: var(--text);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
-    z-index: 100;
+    padding: 5rem 2rem 0;
+    box-sizing: border-box;
+    z-index: 999;
+    justify-content: space-between;
   }
 
   .collapse-btn {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: 2px solid var(--fg-main);
+    top: 1.2rem;
+    right: 1.2rem;
+    background: var(--bg-accent);
+    border: none;
     color: var(--fg-main);
-    font-size: 1.2rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: 8px;
+    font-size: 1.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 9999px;
     cursor: pointer;
+    z-index: 1001;
   }
 
   .large-cover {
@@ -194,58 +108,63 @@
     height: 300px;
     object-fit: cover;
     border-radius: 16px;
-    margin: 2rem 0;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   }
 
-  .controls {
+  .player-controls-bar {
+    width: 100%;
+    background-color: var(--bg-accent);
+    padding: 1rem 2rem;
     display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1rem 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    box-sizing: border-box;
   }
 
-  .controls button {
+  .progress-group {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .progress {
+    width: 100%;
+    accent-color: var(--fg-main);
+  }
+
+  .time-display {
+    font-size: 0.85rem;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .buttons button {
     background-color: var(--fg-main);
-    border: 2px solid var(--fg-main);
+    border: none;
     color: var(--bg-accent);
     font-size: 1.5rem;
-    height: 2rem;
-    width: 4rem;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
     cursor: pointer;
   }
 
-  .progress-main {
-    width: 80%;
-    margin: 1rem 0;
+  .volume input[type='range'] {
+    width: 120px;
     accent-color: var(--fg-main);
   }
-
-  .volume {
-    margin-top: 1rem;
-  }
-
-  .volume input[type="range"] {
-    accent-color: var(--fg-main);
-    width: 150px;
-  }
-
+  
   .volume-vertical {
     width: 150px;
-    height: 125px;
+    height: 50px;
     writing-mode: vertical-lr;
     transform: rotate(180deg); 
   }
-
-  .bottom-volume {
-   width: 100px;
-  }
-
-  .bottom-volume input {
-   width: 100%;
-   accent-color: var(--fg-main);
-  }
-
 </style>

@@ -8,14 +8,41 @@
   export let togglePlayer;
   export let onSeek;
   export let onVolumeChange;
+
+  let isSeeking = false;
+
+  function formatTime(sec) {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
 </script>
+
 
 <div class="bottom-bar">
   <div class="left">
     <span>{isPlaying ? '▶' : '❚❚'} Now playing: Crystal Skies</span>
   </div>
 
-  <input type="range" min="0" max={duration} step="0.1" value={currentTime} on:input={onSeek} class="progress" />
+    <input
+    type="range"
+    class="progress"
+    min="0"
+    max={duration}
+    step="0.1"
+    bind:value={currentTime}
+    on:mousedown={() => isSeeking = true}
+    on:mouseup={() => {
+        isSeeking = false;
+        audio.currentTime = currentTime;
+    }}
+    on:touchstart={() => isSeeking = true}
+    on:touchend={() => {
+        isSeeking = false;
+        audio.currentTime = currentTime;
+    }}
+    />
+
 
   <div class="controls-mini">
     <button>⏮</button>
@@ -24,7 +51,15 @@
   </div>
 
   <div class="volume bottom-volume">
-    <input type="range" min="0" max="1" step="0.01" value={volume} on:input={onVolumeChange} />
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      value={volume}
+      on:input={onVolumeChange}
+      class="volume-horizontal"
+    />
   </div>
 
   <button class="toggle-button" on:click={togglePlayer}>
@@ -100,5 +135,13 @@
     height: 50px;
     object-fit: cover;
     border-radius: 6px;
+  }
+
+  .volume-horizontal {
+    width: 150px;
+    height: 50px; 
+    accent-color: var(--fg-main);
+    writing-mode: vertical-lr;
+    transform: rotate(180deg); 
   }
 </style>
