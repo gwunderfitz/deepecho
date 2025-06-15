@@ -11,6 +11,7 @@
   import { user } from './stores/user.js';
   import { audio } from './audio.js';
   import { onMount } from 'svelte';
+  import Playlist from "./Playlist.svelte";
 
   let currentPage = 'home';
   $user; 
@@ -81,6 +82,7 @@
     home: Home,
     moods: Moods,
     playlists: Playlists,
+    playlist: Playlist,
     login: Login,
     register: Register,
     settings: Settings
@@ -102,7 +104,7 @@
   {/if}
 
   <div style="flex: 1; position: relative;">
-    <svelte:component on:navigate={handleNavigate} this={pages[currentPage]} {...props}   on:navigate={(e) => currentPage = e.detail} />
+    <svelte:component on:navigate={handleNavigate} this={pages[currentPage]} {...props} />
 
     {#if showUI && !showPlayer}
       <MiniPlayer

@@ -1,26 +1,19 @@
 <script>
+  import {createEventDispatcher} from "svelte";
+
   const STORAGE_KEY = 'deepecho_playlists';
 
-  let playlists = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-    'Shower playlist',
-    '70s music',
-    'outofideas'
-  ];
+  let playlists = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
-  let newPlaylist = '';
+  const dispatch = createEventDispatcher();
 
-  function addPlaylist() {
-    const trimmed = newPlaylist.trim();
-    if (trimmed && !playlists.includes(trimmed)) {
-      playlists = [...playlists, trimmed];
-      newPlaylist = '';
-      savePlaylists();
-    }
+  function deletePlaylist(id) {
+    playlists = playlists.filter(playlist => playlist.id !== id);
+    savePlaylists();
   }
 
-  function deletePlaylist(index) {
-    playlists = playlists.filter((_, i) => i !== index);
-    savePlaylists();
+  function editPlaylist(id) {
+    dispatch('navigate', { page: 'playlist', id: id });
   }
 
   function savePlaylists() {
@@ -33,23 +26,17 @@
   <p class="subheading">Edit/delete your existing playlists</p>
 
   <ul class="playlist-list">
-    {#each playlists as playlist, i}
+    {#each playlists as playlist}
       <li>
-        <span>{playlist}</span>
-        <button on:click={() => deletePlaylist(i)}>×</button>
+        <span>{playlist.name}</span>
+        <button  on:click={() => editPlaylist(playlist.id)}>✏️</button>
+        <button on:click={() => deletePlaylist(playlist.id)}>➖</button>
       </li>
     {/each}
   </ul>
 
   <div class="add">
-    <label for="playlistInput">New Playlist Name</label>
-    <input
-      id="playlistInput"
-      bind:value={newPlaylist}
-      placeholder="e.g. Sad Bops"
-      on:keydown={(e) => e.key === 'Enter' && addPlaylist()}
-    />
-    <button on:click={addPlaylist}>Add Playlist</button>
+    <button on:click={editPlaylist}>Add Playlist</button>
   </div>
 </div>
 
