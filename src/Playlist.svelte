@@ -1,6 +1,6 @@
 <script>
   export let id;
-  const isNew = typeof id !== 'number';
+  let isNew = typeof id !== 'number';
 
   let playlists = JSON.parse(localStorage.getItem('deepecho_playlists'));
   let playlist = playlists.find(p => p.id === id);
@@ -22,11 +22,24 @@
 
   let playlistTitle = playlist?.name ?? '';
 
+  function savePlaylist() {
+     const newID = playlists.length + 1;
+      playlists.push({
+        id: newID,
+        name: playlistTitle,
+        songs: newPlaylist.songs,
+      });
+      playlists = [...playlists];
+      playlist = playlists.find(p => p.id === newID);
+      localStorage.setItem('deepecho_playlists', JSON.stringify(playlists));
+      isNew = false;
+      id = newID;
+  }
+
   function removeSong(index) {
     if (isNew) {
-
       newPlaylist.songs.splice(index, 1);
-
+      newPlaylist = {...newPlaylist};
     } else {
       if (!playlist || !playlist.songs) return;
 
@@ -44,6 +57,7 @@
     if (isNew) {
       if (!newPlaylist.songs.includes(song.name)) {
         newPlaylist.songs.push(song.name);
+        newPlaylist = {...newPlaylist};
       }
     } else {
 
@@ -68,6 +82,9 @@
             bind:value={playlistTitle}
             placeholder="New Playlist Name"
     />
+    {#if isNew}
+      <button on:click={savePlaylist}>➕</button>
+    {/if}
   </div>
   <p class="subheading">Edit/delete your current songs</p>
   <ul class="songs">
@@ -97,7 +114,7 @@
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .song {
     background-color: white;
     color: black;
