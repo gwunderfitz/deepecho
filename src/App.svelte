@@ -7,6 +7,7 @@
   import Playlists from './Playlists.svelte';
   import Login from './Login.svelte';
   import Register from './Register.svelte';
+  import Settings from './Settings.svelte';
   import { user } from './stores/user.js';
   import { audio } from './audio.js';
   import { onMount } from 'svelte';
@@ -81,7 +82,8 @@
     moods: Moods,
     playlists: Playlists,
     login: Login,
-    register: Register
+    register: Register,
+    settings: Settings
   };
 
   function handleNavigate(event) {
