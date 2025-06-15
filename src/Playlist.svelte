@@ -5,6 +5,11 @@
   let playlists = JSON.parse(localStorage.getItem('deepecho_playlists'));
   let playlist = playlists.find(p => p.id === id);
 
+  let newPlaylist = {
+    name: '',
+    songs: [],
+  }
+
   const songModules = import.meta.glob('/public/music/*.mp3', { as: 'url' });
 
   let songs = [];
@@ -18,33 +23,44 @@
   let playlistTitle = playlist?.name ?? '';
 
   function removeSong(index) {
-    if (!playlist || !playlist.songs) return;
+    if (isNew) {
 
-    playlist.songs.splice(index, 1);
-    playlists = [...playlists];
+      newPlaylist.songs.splice(index, 1);
 
-    // Reassign playlist so Svelte updates UI
-    playlist = playlists.find(p => p.id === id);
+    } else {
+      if (!playlist || !playlist.songs) return;
 
-    localStorage.setItem('deepecho_playlists', JSON.stringify(playlists));
-  }
-
-  function addSong(song) {
-    if (!playlist) return;
-
-    // Avoid duplicates
-    if (!playlist.songs.includes(song.name)) {
-      playlist.songs.push(song.name);
+      playlist.songs.splice(index, 1);
       playlists = [...playlists];
+
+      // Reassign playlist so Svelte updates UI
       playlist = playlists.find(p => p.id === id);
 
       localStorage.setItem('deepecho_playlists', JSON.stringify(playlists));
     }
   }
+
+  function addSong(song) {
+    if (isNew) {
+      if (!newPlaylist.songs.includes(song.name)) {
+        newPlaylist.songs.push(song.name);
+      }
+    } else {
+
+      // Avoid duplicates
+      if (!playlist.songs.includes(song.name)) {
+        playlist.songs.push(song.name);
+        playlists = [...playlists];
+        playlist = playlists.find(p => p.id === id);
+
+        localStorage.setItem('deepecho_playlists', JSON.stringify(playlists));
+      }
+    }
+  }
 </script>
 
 <div class="page">
-  <h1>{isNew ? 'Create' : 'Edit'} playlist with id: {id}</h1>
+  <h1>{isNew ? 'Create' : 'Edit'} playlist</h1>
 
   <div class="song">
     <input
@@ -55,10 +71,10 @@
   </div>
   <p class="subheading">Edit/delete your current songs</p>
   <ul class="songs">
-    {#each playlist?.songs as song, i}
+    {#each (isNew ? newPlaylist.songs : playlist?.songs) as song, i}
       <li class="song">
-          <span>{song}</span>
-          <button on:click={() => removeSong(i)}>➖</button>
+        <span>{song}</span>
+        <button on:click={() => removeSong(i)}>➖</button>
       </li>
     {/each}
   </ul>
